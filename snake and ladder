@@ -1,0 +1,67 @@
+import random
+
+# Game constants
+BOARD_SIZE = 100
+SNAKES = [(17, 7), (54, 34), (62, 19), (64, 60), (87, 24), (93, 73), (95, 75), (98, 78)]
+LADDERS = [(1, 38), (4, 14), (9, 31), (21, 42), (28, 84), (36, 44), (51, 67), (71, 91), (80, 99)]
+
+# Player class
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.position = 0
+
+    def roll_dice(self):
+        return random.randint(1, 6)
+
+    def move(self, roll):
+        new_position = self.position + roll
+        if new_position > BOARD_SIZE:
+            new_position = BOARD_SIZE - (new_position - BOARD_SIZE)
+        self.position = new_position
+
+    def check_snake(self):
+        for snake in SNAKES:
+            if self.position == snake[0]:
+                print(f"{self.name} landed on a snake! Moving from {self.position} to {snake[1]}")
+                self.position = snake[1]
+
+    def check_ladder(self):
+        for ladder in LADDERS:
+            if self.position == ladder[0]:
+                print(f"{self.name} landed on a ladder! Moving from {self.position} to {ladder[1]}")
+                self.position = ladder[1]
+
+# Game class
+class Game:
+    def __init__(self):
+        self.players = []
+
+    def add_player(self, player):
+        self.players.append(player)
+
+    def play(self):
+        while True:
+            for player in self.players:
+                roll = player.roll_dice()
+                print(f"{player.name} rolled a {roll}")
+                player.move(roll)
+                player.check_snake()
+                player.check_ladder()
+                print(f"{player.name} is now at position {player.position}")
+                if player.position == BOARD_SIZE:
+                    print(f"{player.name} wins!")
+                    return
+
+# Main function
+def main():
+    game = Game()
+    num_players = int(input("Enter the number of players: "))
+    for i in range(num_players):
+        name = input(f"Enter player {i+1} name: ")
+        player = Player(name)
+        game.add_player(player)
+    game.play()
+
+if __name__ == "__main__":
+    main()
